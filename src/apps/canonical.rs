@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use std::path::PathBuf;
+use std::sync::Arc;
 
 use mime::Mime;
 use once_cell::sync::Lazy;
@@ -117,14 +118,18 @@ fn unalias_mime_map<V>(
         .collect()
 }
 
+static DB: Lazy<Arc<SharedMimeInfo>> =
+    Lazy::new(|| Arc::new(SharedMimeInfo::new()));
+
+#[derive(Default, Clone)]
 pub struct CanonicalMimeApps {
-    db: SharedMimeInfo,
+    db: Arc<SharedMimeInfo>,
     mimeapps: MimeApps,
 }
 
 impl From<MimeApps> for CanonicalMimeApps {
     fn from(mimeapps: MimeApps) -> CanonicalMimeApps {
-        let db = SharedMimeInfo::new();
+        let db = Arc::clone(&DB);
 
         let added_associations =
             unalias_mime_map(&db, mimeapps.added_associations);
