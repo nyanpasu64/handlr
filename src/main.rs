@@ -18,7 +18,7 @@ fn main() -> Result<()> {
     // create config if it doesn't exist
     Lazy::force(&CONFIG);
 
-    let mut apps = (*apps::APPS).clone();
+    let mut apps = (*apps::CANONICAL).clone();
 
     let res = || -> Result<()> {
         match Cmd::parse() {
