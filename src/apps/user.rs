@@ -17,9 +17,9 @@ pub static APPS: Lazy<MimeApps> = Lazy::new(|| MimeApps::read().unwrap());
 #[derive(Debug, Default, Clone, pest_derive::Parser)]
 #[grammar = "common/ini.pest"]
 pub struct MimeApps {
-    added_associations: HashMap<Mime, VecDeque<Handler>>,
-    default_apps: HashMap<Mime, VecDeque<Handler>>,
-    system_apps: SystemApps,
+    pub(super) added_associations: HashMap<Mime, VecDeque<Handler>>,
+    pub(super) default_apps: HashMap<Mime, VecDeque<Handler>>,
+    pub(super) system_apps: SystemApps,
 }
 
 impl MimeApps {
