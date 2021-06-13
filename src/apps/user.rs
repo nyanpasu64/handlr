@@ -1,9 +1,8 @@
-use crate::apps::SystemApps;
 use crate::common::atomic_save::{
     AtomicFile, AtomicSaveError, Durability, OverwriteBehavior,
 };
 use crate::common::Handler;
-use crate::{Error, Result, CONFIG};
+use crate::{Error, Result};
 use mime::Mime;
 use once_cell::sync::Lazy;
 use pest::Parser;
@@ -19,7 +18,6 @@ pub static APPS: Lazy<MimeApps> = Lazy::new(|| MimeApps::read().unwrap());
 pub struct MimeApps {
     pub(super) added_associations: HashMap<Mime, VecDeque<Handler>>,
     pub(super) default_apps: HashMap<Mime, VecDeque<Handler>>,
-    pub(super) system_apps: SystemApps,
 }
 
 impl MimeApps {
@@ -42,72 +40,6 @@ impl MimeApps {
         Ok(())
     }
 
-    pub fn get_handler(&self, mime: &Mime) -> Result<Handler> {
-        self.get_handler_from_user(mime)
-            .or_else(|_| {
-                let wildcard =
-                    Mime::from_str(&format!("{}/*", mime.type_())).unwrap();
-                self.get_handler_from_user(&wildcard)
-            })
-            .or_else(|_| self.get_handler_from_added_associations(mime))
-    }
-
-    fn get_handler_from_user(&self, mime: &Mime) -> Result<Handler> {
-        match self.default_apps.get(mime) {
-            Some(handlers) if CONFIG.enable_selector && handlers.len() > 1 => {
-                let handlers = handlers
-                    .into_iter()
-                    .map(|h| (h, h.get_entry().unwrap().name))
-                    .collect::<Vec<_>>();
-
-                let handler = {
-                    let name =
-                        CONFIG.select(handlers.iter().map(|h| h.1.clone()))?;
-
-                    handlers
-                        .into_iter()
-                        .find(|h| h.1 == name)
-                        .unwrap()
-                        .0
-                        .clone()
-                };
-
-                Ok(handler)
-            }
-            Some(handlers) => Ok(handlers.get(0).unwrap().clone()),
-            None => Err(Error::NotFound(mime.to_string())),
-        }
-    }
-
-    fn get_handler_from_added_associations(
-        &self,
-        mime: &Mime,
-    ) -> Result<Handler> {
-        self.added_associations
-            .get(mime)
-            .map(|h| h.get(0).unwrap().clone())
-            .or_else(|| self.system_apps.get_handler(mime))
-            .ok_or(Error::NotFound(mime.to_string()))
-    }
-
-    pub fn show_handler(&self, mime: &Mime, output_json: bool) -> Result<()> {
-        let handler = self.get_handler(mime)?;
-        let output = if output_json {
-            let entry = handler.get_entry()?;
-            let cmd = entry.get_cmd(vec![])?;
-
-            (json::object! {
-                handler: handler.to_string(),
-                name: entry.name.as_str(),
-                cmd: cmd.0 + " " + &cmd.1.join(" "),
-            })
-            .to_string()
-        } else {
-            handler.to_string()
-        };
-        println!("{}", output);
-        Ok(())
-    }
     pub fn path() -> Result<PathBuf> {
         let mut config = xdg::BaseDirectories::new()?.get_config_home();
         config.push("mimeapps.list");
@@ -130,7 +62,6 @@ impl MimeApps {
         let mut conf = Self {
             added_associations: HashMap::default(),
             default_apps: HashMap::default(),
-            system_apps: SystemApps::populate()?,
         };
 
         file.into_inner().for_each(|line| {
@@ -235,27 +166,9 @@ impl MimeApps {
                 println!("Added Associations");
                 table.print(to_rows(&self.added_associations));
             }
-            println!("System Apps");
-            table.print(to_rows(&self.system_apps.0));
         } else {
             table.print(to_rows(&self.default_apps));
         }
-
-        Ok(())
-    }
-    pub fn list_handlers() -> Result<()> {
-        use std::io::Write;
-        use std::os::unix::ffi::OsStrExt;
-
-        let stdout = std::io::stdout();
-        let mut stdout = stdout.lock();
-
-        SystemApps::get_entries()?.for_each(|(_, e)| {
-            stdout.write_all(e.file_name.as_bytes()).unwrap();
-            stdout.write_all(b"\t").unwrap();
-            stdout.write_all(e.name.as_bytes()).unwrap();
-            stdout.write_all(b"\n").unwrap();
-        });
 
         Ok(())
     }
@@ -266,37 +179,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn wildcard_mimes() -> Result<()> {
-        let mut user_apps = MimeApps::default();
-        user_apps.add_handler(
-            Mime::from_str("video/*").unwrap(),
-            Handler::assume_valid("mpv.desktop".into()),
-        );
-        user_apps.add_handler(
-            Mime::from_str("video/webm").unwrap(),
-            Handler::assume_valid("brave.desktop".into()),
-        );
-
-        assert_eq!(
-            user_apps
-                .get_handler(&Mime::from_str("video/mp4")?)?
-                .to_string(),
-            "mpv.desktop"
-        );
-        assert_eq!(
-            user_apps
-                .get_handler(&Mime::from_str("video/asdf")?)?
-                .to_string(),
-            "mpv.desktop"
-        );
-
-        assert_eq!(
-            user_apps
-                .get_handler(&Mime::from_str("video/webm")?)?
-                .to_string(),
-            "brave.desktop"
-        );
-
+    fn test() -> Result<()> {
         Ok(())
     }
 }

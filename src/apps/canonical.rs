@@ -134,14 +134,12 @@ impl From<MimeApps> for CanonicalMimeApps {
         let added_associations =
             unalias_mime_map(&db, mimeapps.added_associations);
         let default_apps = unalias_mime_map(&db, mimeapps.default_apps);
-        let system_apps = mimeapps.system_apps;
 
         CanonicalMimeApps {
             db,
             mimeapps: MimeApps {
                 added_associations,
                 default_apps,
-                system_apps,
             },
         }
     }
@@ -170,32 +168,12 @@ impl CanonicalMimeApps {
         self.mimeapps.remove_handler(&self.unalias(mime))
     }
 
-    pub fn get_handler(&self, mime: &Mime) -> Result<Handler> {
-        self.mimeapps.get_handler(&self.unalias(mime))
-    }
-
-    pub fn show_handler(&self, mime: &Mime, output_json: bool) -> Result<()> {
-        self.mimeapps.show_handler(&self.unalias(mime), output_json)
-    }
-
-    pub fn path() -> Result<PathBuf> {
-        MimeApps::path()
-    }
-
-    pub fn read() -> Result<Self> {
-        Ok(Self::from(MimeApps::read()?))
-    }
-
     pub fn save(&self) -> Result<()> {
         self.mimeapps.save()
     }
 
     pub fn print(&self, detailed: bool) -> Result<()> {
         self.mimeapps.print(detailed)
-    }
-
-    pub fn list_handlers() -> Result<()> {
-        MimeApps::list_handlers()
     }
 }
 

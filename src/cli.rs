@@ -1,4 +1,4 @@
-use crate::common::{Handler, MimeOrExtension, UserPath};
+use crate::common::{Handler, MimeOrExtension};
 
 #[derive(clap::Clap)]
 #[clap(global_setting = clap::AppSettings::DeriveDisplayOrder)]
@@ -11,12 +11,6 @@ pub enum Cmd {
         all: bool,
     },
 
-    /// Open a path/URL with its default handler
-    Open {
-        #[clap(required = true)]
-        paths: Vec<UserPath>,
-    },
-
     /// Set the default handler for mime/extension
     Set {
         mime: MimeOrExtension,
@@ -26,31 +20,10 @@ pub enum Cmd {
     /// Unset the default handler for mime/extension
     Unset { mime: MimeOrExtension },
 
-    /// Launch the handler for specified extension/mime with optional arguments
-    Launch {
-        mime: MimeOrExtension,
-        args: Vec<UserPath>,
-    },
-
-    /// Get handler for this mime/extension
-    Get {
-        #[clap(long)]
-        json: bool,
-        mime: MimeOrExtension,
-    },
-
     /// Add a handler for given mime/extension
     /// Note that the first handler is the default
     Add {
         mime: MimeOrExtension,
         handler: Handler,
-    },
-
-    #[clap(setting = clap::AppSettings::Hidden)]
-    Autocomplete {
-        #[clap(short)]
-        desktop_files: bool,
-        #[clap(short)]
-        mimes: bool,
     },
 }
