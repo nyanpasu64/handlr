@@ -1,8 +1,6 @@
 use url::Url;
 
-use crate::common::MimeType;
 use crate::{Error, Result};
-use std::convert::TryFrom;
 use std::fmt::{Display, Formatter};
 use std::path::PathBuf;
 use std::str::FromStr;
@@ -10,15 +8,6 @@ use std::str::FromStr;
 pub enum UserPath {
     Url(Url),
     File(PathBuf),
-}
-
-impl UserPath {
-    pub fn get_mime(&self) -> Result<MimeType> {
-        match self {
-            Self::Url(url) => Ok(url.into()),
-            Self::File(f) => MimeType::try_from(f.as_path()),
-        }
-    }
 }
 
 impl FromStr for UserPath {

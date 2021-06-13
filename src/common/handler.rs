@@ -1,5 +1,4 @@
 use crate::{Error, Result};
-use std::convert::TryFrom;
 use std::ffi::OsString;
 use std::fmt::Display;
 use std::path::PathBuf;
@@ -22,9 +21,6 @@ impl FromStr for Handler {
 }
 
 impl Handler {
-    pub fn assume_valid(name: OsString) -> Self {
-        Self(name)
-    }
     pub fn get_path(name: &std::ffi::OsStr) -> Option<PathBuf> {
         let mut path = PathBuf::from("applications");
         path.push(name);

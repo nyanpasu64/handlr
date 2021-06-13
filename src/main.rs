@@ -12,8 +12,6 @@ mod utils;
 fn main() -> Result<()> {
     use clap::Clap;
     use cli::Cmd;
-    use common::Handler;
-    use std::collections::HashMap;
 
     // create config if it doesn't exist
     Lazy::force(&CONFIG);
@@ -41,9 +39,6 @@ fn main() -> Result<()> {
     }();
 
     match (res, atty::is(atty::Stream::Stdout)) {
-        (Err(e), _) if matches!(e, Error::Cancelled) => {
-            std::process::exit(1);
-        }
         (Err(e), true) => {
             eprintln!("{}", e);
             std::process::exit(1);

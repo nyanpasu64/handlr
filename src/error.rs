@@ -16,14 +16,6 @@ pub enum Error {
     BadMimeType(#[from] mime::FromStrError),
     #[error("bad mime: {0}")]
     InvalidMime(mime::Mime),
-    #[error("malformed desktop entry at {0}")]
-    BadEntry(std::path::PathBuf),
-    #[error("error spawning selector process '{0}'")]
-    Selector(String),
-    #[error("selection cancelled")]
-    Cancelled,
-    #[error("Please specify the default terminal with handlr set x-scheme-handler/terminal")]
-    NoTerminal,
     #[error("Bad path: {0}")]
     BadPath(String),
 }
