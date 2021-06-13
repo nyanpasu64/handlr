@@ -1,6 +1,8 @@
 use crate::{Error, Result};
 use mime::Mime;
-use std::{convert::TryFrom, path::Path, str::FromStr};
+use std::convert::TryFrom;
+use std::path::Path;
+use std::str::FromStr;
 use url::Url;
 
 // A mime derived from a path or URL
@@ -105,7 +107,10 @@ mod tests {
             "application/x-shellscript"
         );
         assert_eq!(
-            MimeType::try_from(Path::new("./tests/SettingsWidgetFdoSecrets.ui"))?.0,
+            MimeType::try_from(Path::new(
+                "./tests/SettingsWidgetFdoSecrets.ui"
+            ))?
+            .0,
             "application/x-designer"
         );
 

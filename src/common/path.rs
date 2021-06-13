@@ -1,12 +1,11 @@
 use url::Url;
 
-use crate::{common::MimeType, Error, Result};
-use std::{
-    convert::TryFrom,
-    fmt::{Display, Formatter},
-    path::PathBuf,
-    str::FromStr,
-};
+use crate::common::MimeType;
+use crate::{Error, Result};
+use std::convert::TryFrom;
+use std::fmt::{Display, Formatter};
+use std::path::PathBuf;
+use std::str::FromStr;
 
 pub enum UserPath {
     Url(Url),

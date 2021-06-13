@@ -1,10 +1,7 @@
 //! Adapted from https://github.com/untitaker/rust-atomicwrites/blob/master/src/lib.rs.
 
 use std::error::Error as ErrorTrait;
-use std::fmt;
-use std::fs;
-use std::io;
-use std::path;
+use std::{fmt, fs, io, path};
 
 pub use OverwriteBehavior::{AllowOverwrite, DisallowOverwrite};
 

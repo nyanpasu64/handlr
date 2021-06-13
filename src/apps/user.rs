@@ -1,16 +1,16 @@
+use crate::apps::SystemApps;
 use crate::common::atomic_save::{
     AtomicFile, AtomicSaveError, Durability, OverwriteBehavior,
 };
-use crate::{apps::SystemApps, common::Handler, Error, Result, CONFIG};
+use crate::common::Handler;
+use crate::{Error, Result, CONFIG};
 use mime::Mime;
 use once_cell::sync::Lazy;
 use pest::Parser;
-use std::{
-    collections::{HashMap, VecDeque},
-    io::Read,
-    path::PathBuf,
-    str::FromStr,
-};
+use std::collections::{HashMap, VecDeque};
+use std::io::Read;
+use std::path::PathBuf;
+use std::str::FromStr;
 
 pub static APPS: Lazy<MimeApps> = Lazy::new(|| MimeApps::read().unwrap());
 
@@ -180,7 +180,8 @@ impl MimeApps {
     }
     pub fn save(&self) -> Result<()> {
         use itertools::Itertools;
-        use std::io::{prelude::*, BufWriter};
+        use std::io::prelude::*;
+        use std::io::BufWriter;
 
         let af = AtomicFile::new(
             &Self::path()?,
@@ -243,7 +244,8 @@ impl MimeApps {
         Ok(())
     }
     pub fn list_handlers() -> Result<()> {
-        use std::{io::Write, os::unix::ffi::OsStrExt};
+        use std::io::Write;
+        use std::os::unix::ffi::OsStrExt;
 
         let stdout = std::io::stdout();
         let mut stdout = stdout.lock();

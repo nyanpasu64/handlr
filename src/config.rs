@@ -1,4 +1,6 @@
-use crate::{apps::SystemApps, common::Handler, Error, Result};
+use crate::apps::SystemApps;
+use crate::common::Handler;
+use crate::{Error, Result};
 use mime::Mime;
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
@@ -68,10 +70,8 @@ impl Config {
         mut opts: O,
     ) -> Result<String> {
         use itertools::Itertools;
-        use std::{
-            io::prelude::*,
-            process::{Command, Stdio},
-        };
+        use std::io::prelude::*;
+        use std::process::{Command, Stdio};
 
         let process = {
             let mut split = shlex::split(&self.selector).unwrap();

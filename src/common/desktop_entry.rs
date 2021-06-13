@@ -1,14 +1,12 @@
 use crate::{Error, Result};
 use aho_corasick::AhoCorasick;
 use mime::Mime;
-use std::{
-    collections::HashMap,
-    convert::TryFrom,
-    ffi::OsString,
-    path::{Path, PathBuf},
-    process::{Command, Stdio},
-    str::FromStr,
-};
+use std::collections::HashMap;
+use std::convert::TryFrom;
+use std::ffi::OsString;
+use std::path::{Path, PathBuf};
+use std::process::{Command, Stdio};
+use std::str::FromStr;
 
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct DesktopEntry {

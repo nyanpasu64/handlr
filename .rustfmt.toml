@@ -1,2 +1,2 @@
 max_width = 80
-merge_imports = true
+imports_granularity = "Module"

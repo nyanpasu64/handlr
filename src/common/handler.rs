@@ -1,8 +1,10 @@
-use crate::{
-    common::{DesktopEntry, ExecMode},
-    Error, Result,
-};
-use std::{fmt::Display, convert::TryFrom, ffi::OsString, path::PathBuf, str::FromStr};
+use crate::common::{DesktopEntry, ExecMode};
+use crate::{Error, Result};
+use std::convert::TryFrom;
+use std::ffi::OsString;
+use std::fmt::Display;
+use std::path::PathBuf;
+use std::str::FromStr;
 
 #[derive(Debug, Clone, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Handler(OsString);

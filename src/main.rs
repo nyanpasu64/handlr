@@ -31,7 +31,9 @@ fn main() -> Result<()> {
                 apps.save()?;
             }
             Cmd::Launch { mime, args } => {
-                apps.get_handler(&mime.0)?.launch(args.into_iter().map(|a| a.to_string()).collect())?;
+                apps.get_handler(&mime.0)?.launch(
+                    args.into_iter().map(|a| a.to_string()).collect(),
+                )?;
             }
             Cmd::Get { mime, json } => {
                 apps.show_handler(&mime.0, json)?;

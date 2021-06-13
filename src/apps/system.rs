@@ -1,13 +1,9 @@
-use crate::{
-    common::{DesktopEntry, Handler},
-    Result,
-};
+use crate::common::{DesktopEntry, Handler};
+use crate::Result;
 use mime::Mime;
-use std::{
-    collections::{HashMap, VecDeque},
-    convert::TryFrom,
-    ffi::OsString,
-};
+use std::collections::{HashMap, VecDeque};
+use std::convert::TryFrom;
+use std::ffi::OsString;
 
 #[derive(Debug, Default, Clone)]
 pub struct SystemApps(pub HashMap<Mime, VecDeque<Handler>>);
