@@ -26,4 +26,7 @@ pub enum Cmd {
         mime: MimeOrExtension,
         handler: Handler,
     },
+
+    /// Fix the current MIME associations by merging and removing MIME aliases
+    Fix,
 }

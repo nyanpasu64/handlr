@@ -34,6 +34,9 @@ fn main() -> Result<()> {
             Cmd::Unset { mime } => {
                 apps.remove_handler(&mime.0)?;
             }
+            Cmd::Fix => {
+                apps.save()?;
+            }
         }
         Ok(())
     }();
