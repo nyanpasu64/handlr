@@ -7,6 +7,7 @@ pub use OverwriteBehavior::{AllowOverwrite, DisallowOverwrite};
 
 /// Whether to allow overwriting if the target file exists.
 #[derive(Clone, Copy)]
+#[allow(dead_code)]
 pub enum OverwriteBehavior {
     /// Overwrite files silently.
     AllowOverwrite,
@@ -20,6 +21,7 @@ pub enum OverwriteBehavior {
 /// Regardless of the option you pick, the atomic write will be consistent after a crash
 /// (will never contain partially-written data).
 #[derive(Clone, Copy)]
+#[allow(dead_code)]
 pub enum Durability {
     /// Faster, ensures either old or new file contents (but not half-written data)
     /// will be present after system crash.
