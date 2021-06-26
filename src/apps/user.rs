@@ -17,6 +17,7 @@ pub static APPS: Lazy<MimeApps> = Lazy::new(|| MimeApps::read().unwrap());
 #[grammar = "common/ini.pest"]
 pub struct MimeApps {
     pub(super) added_associations: HashMap<Mime, VecDeque<Handler>>,
+    pub(super) removed_associations: HashMap<Mime, VecDeque<Handler>>,
     pub(super) default_apps: HashMap<Mime, VecDeque<Handler>>,
 }
 
@@ -61,6 +62,7 @@ impl MimeApps {
         let mut current_section_name = "".to_string();
         let mut conf = Self {
             added_associations: HashMap::default(),
+            removed_associations: HashMap::default(),
             default_apps: HashMap::default(),
         };
 
@@ -96,6 +98,10 @@ impl MimeApps {
                                 conf.added_associations.insert(mime, handlers)
                             }
 
+                            (Ok(mime), "Removed Associations") => {
+                                conf.removed_associations.insert(mime, handlers)
+                            }
+
                             (Ok(mime), "Default Applications") => {
                                 conf.default_apps.insert(mime, handlers)
                             }
@@ -122,21 +128,31 @@ impl MimeApps {
         af.write(|f| -> Result<()> {
             let mut writer = BufWriter::new(f);
 
-            writer.write_all(b"[Added Associations]\n")?;
-            for (k, v) in self.added_associations.iter().sorted() {
-                writer.write_all(k.essence_str().as_ref())?;
-                writer.write_all(b"=")?;
-                writer.write_all(v.iter().join(";").as_ref())?;
-                writer.write_all(b";\n")?;
+            #[rustfmt::skip]
+            let mut write_section = |
+                title,
+                items: &HashMap<Mime, VecDeque<Handler>>,
+            | -> Result<()> {
+                writer.write_all(title)?;
+                for (k, v) in items.iter().sorted() {
+                    writer.write_all(k.essence_str().as_ref())?;
+                    writer.write_all(b"=")?;
+                    writer.write_all(v.iter().join(";").as_ref())?;
+                    writer.write_all(b";\n")?;
+                }
+                Ok(())
+            };
+
+            write_section(b"[Added Associations]\n", &self.added_associations)?;
+
+            if !self.removed_associations.is_empty() {
+                write_section(
+                    b"\n[Removed Associations]\n",
+                    &self.removed_associations,
+                )?;
             }
 
-            writer.write_all(b"\n[Default Applications]\n")?;
-            for (k, v) in self.default_apps.iter().sorted() {
-                writer.write_all(k.essence_str().as_ref())?;
-                writer.write_all(b"=")?;
-                writer.write_all(v.iter().join(";").as_ref())?;
-                writer.write_all(b";\n")?;
-            }
+            write_section(b"\n[Default Applications]\n", &self.default_apps)?;
 
             writer.flush()?;
             Ok(())

@@ -132,12 +132,15 @@ impl From<MimeApps> for CanonicalMimeApps {
 
         let added_associations =
             unalias_mime_map(&db, mimeapps.added_associations);
+        let removed_associations =
+            unalias_mime_map(&db, mimeapps.removed_associations);
         let default_apps = unalias_mime_map(&db, mimeapps.default_apps);
 
         CanonicalMimeApps {
             db,
             mimeapps: MimeApps {
                 added_associations,
+                removed_associations,
                 default_apps,
             },
         }
